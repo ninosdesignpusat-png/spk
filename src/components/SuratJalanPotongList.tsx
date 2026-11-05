@@ -66,45 +66,45 @@ export const SuratJalanPotongList: React.FC<SuratJalanPotongListProps> = ({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 pb-24 sm:pb-8">
       {/* Top Header & Actions Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-800 flex items-center justify-center">
-              <Scissors className="w-4 h-4" />
+            <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 flex items-center justify-center">
+              <Scissors className="w-4 h-4 text-amber-700" />
             </div>
-            <h1 className="text-xl font-bold text-slate-900 font-serif-brand">
+            <h1 className="text-lg sm:text-xl font-bold text-slate-900 font-serif-brand">
               Daftar Surat Jalan Potong Bahan
             </h1>
           </div>
           <p className="mt-1 text-xs text-slate-500">
-            Pencatatan penyerahan kain gulung, instruksi pemotongan, marker size, dan hasil realisasi potong Ninos Design.
+            Penyerahan kain gulung, instruksi pemotongan, marker size, dan hasil potong Nino's Design.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={onCopyTable}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-xs transition"
-            title="Salin Data Siap Paste (Ctrl+V) di Google Sheets / Excel"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-xs transition active:scale-95"
+            title="Salin Data Siap Paste (Ctrl+V) di Google Sheets"
           >
             <Copy className="w-3.5 h-3.5 text-slate-500" />
-            <span>Salin ke Spreadsheet</span>
+            <span>Salin Spreadsheet</span>
           </button>
 
           <button
             onClick={onExportCSV}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-xs transition"
-            title="Download file CSV untuk Google Sheets"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-xs transition active:scale-95"
+            title="Download CSV"
           >
             <Download className="w-3.5 h-3.5 text-slate-500" />
-            <span>Download CSV</span>
+            <span>CSV</span>
           </button>
 
           <button
             onClick={onNewSJP}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-rose-900 hover:bg-rose-800 text-white text-xs font-bold shadow-xs shadow-rose-900/20 transition active:scale-95"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black shadow-md shadow-amber-950/20 transition active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>+ Buat SJP Baru</span>

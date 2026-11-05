@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Scissors,
   FileText,
@@ -9,7 +9,8 @@ import {
   Database,
   CheckCircle2,
   AlertCircle,
-  Building2,
+  Menu,
+  X,
 } from 'lucide-react';
 import { SpreadsheetSettings } from '../types/ninos';
 
@@ -39,196 +40,261 @@ export const Navbar: React.FC<NavbarProps> = ({
   onQuickSync,
 }) => {
   const isSheetConfigured = Boolean(spreadsheetSettings.webAppUrl?.trim());
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="no-print sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Identity */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-900 via-rose-800 to-amber-700 flex items-center justify-center shadow-md shadow-rose-900/20 overflow-hidden ring-1 ring-rose-900/30">
+    <>
+      {/* Top Header */}
+      <header className="no-print sticky top-0 z-40 bg-slate-950 text-white border-b border-amber-900/30 shadow-md">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Brand Logo & Name */}
+            <div
+              className="flex items-center gap-2.5 cursor-pointer select-none active:scale-98 transition-transform"
+              onClick={() => setActiveTab('dashboard')}
+            >
+              <div className="w-12 h-11 rounded-xl bg-gradient-to-b from-slate-900 to-black p-1 flex items-center justify-center border border-amber-500/40 shadow-sm shadow-amber-950/40">
                 <img
                   src="/logo.png"
-                  alt="Ninos Design"
-                  className="w-full h-full object-contain p-0.5"
-                  onError={(e) => {
-                    // Fallback to stylized text if image missing
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
+                  alt="Nino's Design Logo"
+                  className="w-full h-full object-contain filter drop-shadow"
                 />
-                <span className="text-white font-serif font-black text-lg tracking-wider">N</span>
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold tracking-tight text-slate-900 font-serif-brand">
-                    NINOS DESIGN
+                <div className="flex items-center gap-1.5">
+                  <span className="text-base sm:text-lg font-black tracking-wider text-amber-300 font-serif-brand">
+                    NINO'S DESIGN
                   </span>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-800 border border-rose-200/70">
-                    Garment & CMT
+                  <span className="text-[9px] font-bold tracking-widest uppercase px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                    GARMENT
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 font-medium">
-                  Sistem Surat Jalan Potong & SPK Produksi
+                <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium leading-none mt-0.5">
+                  Surat Jalan Potong & SPK Produksi
                 </p>
               </div>
             </div>
-          </div>
 
-          {/* Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60">
-            <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'dashboard'
-                  ? 'bg-white text-rose-900 shadow-xs shadow-slate-200 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-              }`}
-            >
-              <LayoutDashboard className="w-3.5 h-3.5" />
-              <span>Dashboard</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('sjp')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'sjp'
-                  ? 'bg-white text-rose-900 shadow-xs shadow-slate-200 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-              }`}
-            >
-              <Scissors className="w-3.5 h-3.5" />
-              <span>Surat Jalan Potong</span>
-              <span className="ml-0.5 text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-700">
-                {sjpCount}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('spk')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'spk'
-                  ? 'bg-white text-rose-900 shadow-xs shadow-slate-200 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-              }`}
-            >
-              <FileText className="w-3.5 h-3.5" />
-              <span>SPK Produksi</span>
-              <span className="ml-0.5 text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-700">
-                {spkCount}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('master')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'master'
-                  ? 'bg-white text-rose-900 shadow-xs shadow-slate-200 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-              }`}
-            >
-              <Database className="w-3.5 h-3.5" />
-              <span>Data Master</span>
-            </button>
-          </nav>
-
-          {/* Action Area & Spreadsheet Status */}
-          <div className="flex items-center gap-2">
-            {/* Google Sheets Trigger */}
-            <div className="flex items-center">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
               <button
-                onClick={onOpenSpreadsheetModal}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
-                  isSheetConfigured
-                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
-                    : 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                onClick={() => setActiveTab('dashboard')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === 'dashboard'
+                    ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
                 }`}
-                title="Kelola Koneksi Google Sheets"
               >
-                <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-                <span className="hidden sm:inline">Spreadsheet</span>
-                {isSheetConfigured ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 ml-0.5" />
-                ) : (
-                  <AlertCircle className="w-3.5 h-3.5 text-amber-600 ml-0.5" />
-                )}
+                <LayoutDashboard className="w-3.5 h-3.5" />
+                <span>Dashboard</span>
               </button>
 
-              {isSheetConfigured && (
+              <button
+                onClick={() => setActiveTab('sjp')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === 'sjp'
+                    ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <Scissors className="w-3.5 h-3.5" />
+                <span>Surat Jalan Potong</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${activeTab === 'sjp' ? 'bg-slate-950 text-amber-300' : 'bg-slate-800 text-slate-300'}`}>
+                  {sjpCount}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('spk')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === 'spk'
+                    ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>SPK Produksi</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${activeTab === 'spk' ? 'bg-slate-950 text-amber-300' : 'bg-slate-800 text-slate-300'}`}>
+                  {spkCount}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('master')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === 'master'
+                    ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <Database className="w-3.5 h-3.5" />
+                <span>Data Master</span>
+              </button>
+            </nav>
+
+            {/* Action Area & Spreadsheet Quick Sync */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              {/* Spreadsheet button */}
+              <div className="flex items-center">
                 <button
-                  onClick={onQuickSync}
-                  disabled={isSyncing}
-                  className="ml-1 p-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50 transition-colors"
-                  title="Sinkron Cepat ke Google Sheets"
+                  onClick={onOpenSpreadsheetModal}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                    isSheetConfigured
+                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-600/50 hover:bg-emerald-900/80'
+                      : 'bg-amber-950/80 text-amber-300 border-amber-600/50 hover:bg-amber-900/80'
+                  }`}
+                  title="Koneksi Google Sheets"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-emerald-600' : ''}`} />
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+                  <span className="hidden lg:inline">Spreadsheet</span>
+                  {isSheetConfigured ? (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
+                  )}
                 </button>
-              )}
-            </div>
 
-            {/* Quick Actions Dropdown / Buttons */}
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={onNewSJP}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800 shadow-xs transition-all active:scale-95"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">+ SJP Potong</span>
-                <span className="sm:hidden">+ SJP</span>
-              </button>
+                {isSheetConfigured && (
+                  <button
+                    onClick={onQuickSync}
+                    disabled={isSyncing}
+                    className="ml-1 p-1.5 rounded-lg border border-emerald-700/60 bg-emerald-950 text-emerald-400 hover:bg-emerald-900 disabled:opacity-50 transition"
+                    title="Sinkronkan Sekarang"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-emerald-400' : ''}`} />
+                  </button>
+                )}
+              </div>
 
-              <button
-                onClick={onNewSPK}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-900 text-white hover:bg-rose-800 shadow-xs shadow-rose-900/20 transition-all active:scale-95"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">+ SPK Produksi</span>
-                <span className="sm:hidden">+ SPK</span>
-              </button>
+              {/* Desktop Action Buttons */}
+              <div className="hidden sm:flex items-center gap-2">
+                <button
+                  onClick={onNewSJP}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-white hover:bg-slate-700 border border-slate-700 shadow-xs transition active:scale-95"
+                >
+                  <Plus className="w-3.5 h-3.5 text-amber-300" />
+                  <span>+ SJP Potong</span>
+                </button>
+
+                <button
+                  onClick={onNewSPK}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:from-amber-400 hover:to-amber-500 shadow-md shadow-amber-950/50 transition active:scale-95"
+                >
+                  <Plus className="w-3.5 h-3.5 text-slate-950" />
+                  <span>+ SPK Jahit</span>
+                </button>
+              </div>
+
+              {/* Mobile Quick Add Menu Button */}
+              <div className="sm:hidden flex items-center">
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="p-2 rounded-xl bg-amber-500 text-slate-950 font-bold active:scale-95 transition"
+                  title="Menu Cepat Tambah"
+                >
+                  {mobileMenuOpen ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Submenu Bar */}
-      <div className="md:hidden flex items-center justify-around border-t border-slate-200 bg-slate-50/90 px-2 py-1.5 text-xs">
-        <button
-          onClick={() => setActiveTab('dashboard')}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-md ${
-            activeTab === 'dashboard' ? 'bg-white text-rose-900 font-bold shadow-xs' : 'text-slate-600'
-          }`}
-        >
-          <LayoutDashboard className="w-3.5 h-3.5" />
-          <span>Dashboard</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('sjp')}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-md ${
-            activeTab === 'sjp' ? 'bg-white text-rose-900 font-bold shadow-xs' : 'text-slate-600'
-          }`}
-        >
-          <Scissors className="w-3.5 h-3.5" />
-          <span>SJP ({sjpCount})</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('spk')}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-md ${
-            activeTab === 'spk' ? 'bg-white text-rose-900 font-bold shadow-xs' : 'text-slate-600'
-          }`}
-        >
-          <FileText className="w-3.5 h-3.5" />
-          <span>SPK ({spkCount})</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('master')}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-md ${
-            activeTab === 'master' ? 'bg-white text-rose-900 font-bold shadow-xs' : 'text-slate-600'
-          }`}
-        >
-          <Database className="w-3.5 h-3.5" />
-          <span>Master</span>
-        </button>
+        {/* Mobile Dropdown Popover */}
+        {mobileMenuOpen && (
+          <div className="sm:hidden border-t border-slate-800 bg-slate-900 p-3 space-y-2 animate-in slide-in-from-top-2 duration-150 shadow-xl">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block px-1">
+              Buat Dokumen Baru Cepat:
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onNewSJP();
+                }}
+                className="flex items-center justify-center gap-2 p-3 rounded-xl bg-slate-800 text-white font-bold text-xs border border-slate-700 active:scale-95"
+              >
+                <Scissors className="w-4 h-4 text-amber-400" />
+                <span>+ Surat Jalan Potong</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onNewSPK();
+                }}
+                className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs active:scale-95"
+              >
+                <FileText className="w-4 h-4" />
+                <span>+ SPK Produksi</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* MOBILE STICKY BOTTOM BAR (iOS / Android App Navigation Style) */}
+      <div className="no-print sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 safe-area-bottom shadow-2xl">
+        <div className="flex items-center justify-around h-14 px-1">
+          <button
+            onClick={() => setActiveTab('dashboard')}
+            className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+              activeTab === 'dashboard' ? 'text-amber-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            <span className="text-[10px] mt-0.5">Beranda</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('sjp')}
+            className={`flex flex-col items-center justify-center flex-1 py-1 relative transition-all ${
+              activeTab === 'sjp' ? 'text-amber-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Scissors className="w-4 h-4" />
+            <span className="text-[10px] mt-0.5">SJP Potong</span>
+            {sjpCount > 0 && (
+              <span className="absolute top-1 right-3 text-[9px] font-bold px-1 rounded-full bg-rose-600 text-white">
+                {sjpCount}
+              </span>
+            )}
+          </button>
+
+          {/* Prominent Center Add Button on Mobile */}
+          <button
+            onClick={onNewSJP}
+            className="flex flex-col items-center justify-center -mt-4 bg-gradient-to-tr from-amber-500 to-amber-400 text-slate-950 w-11 h-11 rounded-full shadow-lg shadow-amber-950/60 border-2 border-slate-950 active:scale-95 transition"
+            title="Buat SJP Cepat"
+          >
+            <Plus className="w-6 h-6 stroke-[2.5]" />
+          </button>
+
+          <button
+            onClick={() => setActiveTab('spk')}
+            className={`flex flex-col items-center justify-center flex-1 py-1 relative transition-all ${
+              activeTab === 'spk' ? 'text-amber-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <FileText className="w-4 h-4" />
+            <span className="text-[10px] mt-0.5">SPK Jahit</span>
+            {spkCount > 0 && (
+              <span className="absolute top-1 right-3 text-[9px] font-bold px-1 rounded-full bg-emerald-600 text-white">
+                {spkCount}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab('master')}
+            className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+              activeTab === 'master' ? 'text-amber-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Database className="w-4 h-4" />
+            <span className="text-[10px] mt-0.5">Master</span>
+          </button>
+        </div>
       </div>
-    </header>
+    </>
   );
 };

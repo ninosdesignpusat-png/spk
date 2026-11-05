@@ -96,25 +96,21 @@ export const PrintViewModal: React.FC<PrintViewModalProps> = ({
         {/* Printable Paper Area (Simulates A4 Sheet) */}
         <div className="p-4 sm:p-8 overflow-y-auto flex-1 bg-slate-100 flex justify-center">
           <div className="print-container bg-white w-full max-w-[210mm] min-h-[297mm] p-6 sm:p-10 shadow-lg border border-slate-300 text-slate-900 text-xs font-sans print:shadow-none print:border-none print:p-0">
-            {/* KOP SURAT RESMI NINOS DESIGN */}
+            {/* KOP SURAT RESMI NINO'S DESIGN */}
             <div className="flex items-center justify-between border-b-2 border-slate-900 pb-3 mb-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-rose-950 to-rose-800 flex items-center justify-center p-1 text-white font-serif font-black text-2xl shadow-sm">
+                <div className="w-16 h-16 rounded-xl bg-slate-950 p-1 flex items-center justify-center border border-amber-600/40 shadow-sm shrink-0">
                   <img
                     src="/logo.png"
-                    alt="Ninos Design"
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = 'none';
-                    }}
+                    alt="NINO'S DESIGN"
+                    className="w-full h-full object-contain filter drop-shadow"
                   />
-                  <span>N</span>
                 </div>
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-black font-serif-brand tracking-wider text-slate-900 uppercase">
-                    NINOS DESIGN
+                  <h1 className="text-xl sm:text-2xl font-black font-serif-brand tracking-widest text-slate-900 uppercase">
+                    NINO'S DESIGN
                   </h1>
-                  <p className="text-[11px] font-bold text-rose-900 tracking-wide uppercase">
+                  <p className="text-[11px] font-bold text-amber-800 tracking-wider uppercase">
                     Modest Fashion & Garment Manufacturing
                   </p>
                   <p className="text-[10px] text-slate-600 mt-0.5 leading-tight">

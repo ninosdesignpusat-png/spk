@@ -100,7 +100,7 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 pb-24 sm:pb-8">
       {/* Header */}
       <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

@@ -11,6 +11,7 @@
     font-family: var(--font-sans);
     color: #0f172a;
     background-color: #f8fafc;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .font-mono,
@@ -22,12 +23,33 @@
   .font-serif-brand {
     font-family: var(--font-serif);
   }
+
+  /* Prevent iOS automatic zoom on focus while maintaining touch target */
+  @media (max-width: 640px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+  }
+}
+
+/* Safe area insets for modern mobile devices */
+.safe-area-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #1e1b18 0%, #2a241e 50%, #151310 100%);
+}
+
+.gold-badge {
+  background: linear-gradient(135deg, #d4af37 0%, #edd892 50%, #b8860b 100%);
+  color: #1a160d;
 }
 
 /* Custom scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: #f1f5f9;
@@ -85,7 +107,6 @@
     break-inside: avoid;
   }
 
-  /* Table borders in print */
   .print-table {
     border-collapse: collapse !important;
     width: 100% !important;

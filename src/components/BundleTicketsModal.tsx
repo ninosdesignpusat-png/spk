@@ -53,16 +53,16 @@ export const BundleTicketsModal: React.FC<BundleTicketsModalProps> = ({
   });
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[96vh] flex flex-col shadow-2xl border border-slate-300 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center sm:p-4">
+      <div className="bg-white w-full h-full sm:h-auto sm:max-h-[96vh] sm:max-w-4xl sm:rounded-2xl flex flex-col shadow-2xl border border-slate-300 overflow-hidden">
         {/* Controls Toolbar */}
-        <div className="no-print px-6 py-3.5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+        <div className="no-print px-4 sm:px-6 py-3.5 bg-slate-950 text-white flex items-center justify-between border-b border-amber-900/30">
           <div className="flex items-center gap-2">
             <Tag className="w-4 h-4 text-amber-400" />
-            <span className="font-bold text-sm">
-              Tiket Bundel Potongan ({tickets.length} Lembar Tag)
+            <span className="font-bold text-xs sm:text-sm">
+              Tiket Bundel ({tickets.length} Tag)
             </span>
-            <span className="font-mono text-xs text-slate-300 bg-slate-800 px-2 py-0.5 rounded">
+            <span className="font-mono text-[10px] sm:text-xs text-amber-300 bg-slate-900 border border-amber-600/30 px-2 py-0.5 rounded">
               {sjp.nomorSurat}
             </span>
           </div>
@@ -70,10 +70,10 @@ export const BundleTicketsModal: React.FC<BundleTicketsModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={triggerPrintWindow}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-rose-800 hover:bg-rose-700 text-white font-bold text-xs shadow-md transition active:scale-95"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow-md transition active:scale-95"
             >
               <Printer className="w-4 h-4" />
-              <span>Cetak Tiket Bundel (A4)</span>
+              <span>Cetak Tiket</span>
             </button>
 
             <button
