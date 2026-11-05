@@ -1,0 +1,376 @@
+{
+  "entities": {
+    "Room": {
+      "title": "Room",
+      "description": "Single hotel room unit with status and pricing configuration",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Authenticated user UID owning this record",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "roomNumber": {
+          "type": "string",
+          "description": "Room unit number (e.g., 101, 201)",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name of the room",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "type": {
+          "type": "string",
+          "description": "Rate plan room type",
+          "enum": ["Standard Room", "Deluxe Room", "Family Suite"],
+          "maxLength": 40
+        },
+        "physicalCategory": {
+          "type": "string",
+          "description": "Physical configuration category",
+          "enum": ["Deluxe Room", "Standard AC", "Room Ekonomi Kipas"],
+          "maxLength": 40
+        },
+        "status": {
+          "type": "string",
+          "description": "Housekeeping & availability status",
+          "enum": ["Available", "Occupied", "Dirty", "Maintenance"],
+          "maxLength": 20
+        },
+        "weekdayRate": {
+          "type": "number",
+          "description": "Weekday nightly price in IDR"
+        },
+        "weekendRate": {
+          "type": "number",
+          "description": "Weekend nightly price in IDR"
+        },
+        "includesBreakfast": {
+          "type": "boolean",
+          "description": "Whether room rate includes breakfast"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last modification"
+        }
+      },
+      "required": [
+        "ownerId",
+        "roomNumber",
+        "name",
+        "type",
+        "physicalCategory",
+        "status",
+        "weekdayRate",
+        "weekendRate",
+        "includesBreakfast",
+        "updatedAt"
+      ]
+    },
+    "Reservation": {
+      "title": "Reservation",
+      "description": "Guest reservation record with automatic OTA commission breakdown",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Authenticated user UID owning this record",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "bookingCode": {
+          "type": "string",
+          "description": "Unique booking reference code",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "guestName": {
+          "type": "string",
+          "description": "Full name of the guest",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "roomId": {
+          "type": "string",
+          "description": "ID of the booked room unit",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "roomNumber": {
+          "type": "string",
+          "description": "Room number string",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "roomType": {
+          "type": "string",
+          "description": "Room rate plan category",
+          "enum": ["Standard Room", "Deluxe Room", "Family Suite"],
+          "maxLength": 40
+        },
+        "checkIn": {
+          "type": "string",
+          "description": "Check-in ISO date string YYYY-MM-DD",
+          "minLength": 10,
+          "maxLength": 20
+        },
+        "checkOut": {
+          "type": "string",
+          "description": "Check-out ISO date string YYYY-MM-DD",
+          "minLength": 10,
+          "maxLength": 20
+        },
+        "nights": {
+          "type": "number",
+          "description": "Total room nights booked"
+        },
+        "channel": {
+          "type": "string",
+          "description": "Booking source / OTA channel",
+          "enum": [
+            "Direct Booking",
+            "Airbnb",
+            "Traveloka",
+            "Tiket.com",
+            "Agoda",
+            "Booking.com"
+          ],
+          "maxLength": 40
+        },
+        "grossRevenue": {
+          "type": "number",
+          "description": "Total gross room revenue before OTA commission"
+        },
+        "commissionRate": {
+          "type": "number",
+          "description": "OTA commission percentage (0 to 100)"
+        },
+        "commissionAmount": {
+          "type": "number",
+          "description": "Nominal OTA commission deduction in IDR"
+        },
+        "netRevenue": {
+          "type": "number",
+          "description": "Net room revenue after commission deduction"
+        },
+        "status": {
+          "type": "string",
+          "description": "Reservation lifecycle status",
+          "enum": ["Confirmed", "Checked-In", "Checked-Out", "Cancelled"],
+          "maxLength": 20
+        },
+        "monthKey": {
+          "type": "string",
+          "description": "Accounting month key YYYY-MM",
+          "minLength": 7,
+          "maxLength": 10
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp"
+        }
+      },
+      "required": [
+        "ownerId",
+        "bookingCode",
+        "guestName",
+        "roomId",
+        "roomNumber",
+        "roomType",
+        "checkIn",
+        "checkOut",
+        "nights",
+        "channel",
+        "grossRevenue",
+        "commissionRate",
+        "commissionAmount",
+        "netRevenue",
+        "status",
+        "monthKey",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Monthly operational expense entry across 7 accounting categories",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Authenticated user UID owning this record",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "category": {
+          "type": "string",
+          "description": "Expense category",
+          "enum": [
+            "Gaji Staf & Operasional SDM",
+            "Listrik, Air, WiFi & Gas (Utilities)",
+            "Housekeeping, Laundry & Amenities",
+            "Bahan Baku Sarapan (F&B Cost)",
+            "Maintenance & Perbaikan Rutin",
+            "Marketing & Promosi",
+            "Depresiasi Aset & Peralatan"
+          ],
+          "maxLength": 80
+        },
+        "description": {
+          "type": "string",
+          "description": "Expense item description",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "amount": {
+          "type": "number",
+          "description": "Expense amount in IDR"
+        },
+        "date": {
+          "type": "string",
+          "description": "Transaction date YYYY-MM-DD",
+          "minLength": 10,
+          "maxLength": 20
+        },
+        "monthKey": {
+          "type": "string",
+          "description": "Accounting month key YYYY-MM",
+          "minLength": 7,
+          "maxLength": 10
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp"
+        }
+      },
+      "required": [
+        "ownerId",
+        "category",
+        "description",
+        "amount",
+        "date",
+        "monthKey",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "PropertySettings": {
+      "title": "PropertySettings",
+      "description": "Rate plan and OTA commission percentage configuration",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Authenticated user UID owning this configuration",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "standardWeekday": {
+          "type": "number",
+          "description": "Standard room weekday price"
+        },
+        "standardWeekend": {
+          "type": "number",
+          "description": "Standard room weekend price"
+        },
+        "deluxeWeekday": {
+          "type": "number",
+          "description": "Deluxe room weekday price"
+        },
+        "deluxeWeekend": {
+          "type": "number",
+          "description": "Deluxe room weekend price"
+        },
+        "familySuiteRate": {
+          "type": "number",
+          "description": "Family suite all-day price"
+        },
+        "commAirbnb": {
+          "type": "number",
+          "description": "Airbnb commission percentage"
+        },
+        "commTraveloka": {
+          "type": "number",
+          "description": "Traveloka commission percentage"
+        },
+        "commTiket": {
+          "type": "number",
+          "description": "Tiket.com commission percentage"
+        },
+        "commAgoda": {
+          "type": "number",
+          "description": "Agoda commission percentage"
+        },
+        "commBooking": {
+          "type": "number",
+          "description": "Booking.com commission percentage"
+        },
+        "lastOtaSync": {
+          "type": "string",
+          "description": "ISO timestamp of last OTA availability sync",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp"
+        }
+      },
+      "required": [
+        "ownerId",
+        "standardWeekday",
+        "standardWeekend",
+        "deluxeWeekday",
+        "deluxeWeekend",
+        "familySuiteRate",
+        "commAirbnb",
+        "commTraveloka",
+        "commTiket",
+        "commAgoda",
+        "commBooking",
+        "lastOtaSync",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/rooms/{roomId}": {
+      "schema": { "$ref": "#/entities/Room" },
+      "description": "Stores room units and housekeeping status for the property"
+    },
+    "/reservations/{reservationId}": {
+      "schema": { "$ref": "#/entities/Reservation" },
+      "description": "Stores guest reservations and OTA revenue calculations"
+    },
+    "/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Stores monthly operational expenses across 7 categories"
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/PropertySettings" },
+      "description": "Stores rate plan prices and OTA commission settings"
+    }
+  }
+}

@@ -1,0 +1,221 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'jajapintravel@gmail.com'
+      );
+    }
+
+    function isValidRoom(data) {
+      return data.keys().hasAll([
+        'ownerId', 'roomNumber', 'name', 'type', 'physicalCategory',
+        'status', 'weekdayRate', 'weekendRate', 'includesBreakfast', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId', 'roomNumber', 'name', 'type', 'physicalCategory',
+        'status', 'weekdayRate', 'weekendRate', 'includesBreakfast', 'updatedAt'
+      ]) &&
+      data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.roomNumber is string && data.roomNumber.size() >= 1 && data.roomNumber.size() <= 16 &&
+      data.name is string && data.name.size() >= 1 && data.name.size() <= 100 &&
+      data.type is string && data.type.size() <= 40 &&
+      data.type in ['Standard Room', 'Deluxe Room', 'Family Suite'] &&
+      data.physicalCategory is string && data.physicalCategory.size() <= 40 &&
+      data.physicalCategory in ['Deluxe Room', 'Standard AC', 'Room Ekonomi Kipas'] &&
+      data.status is string && data.status.size() <= 20 &&
+      data.status in ['Available', 'Occupied', 'Dirty', 'Maintenance'] &&
+      data.weekdayRate is number && data.weekdayRate >= 0 && data.weekdayRate <= 100000000 &&
+      data.weekendRate is number && data.weekendRate >= 0 && data.weekendRate <= 100000000 &&
+      data.includesBreakfast is bool &&
+      data.updatedAt is timestamp && data.updatedAt == request.time;
+    }
+
+    function isValidReservation(data) {
+      return data.keys().hasAll([
+        'ownerId', 'bookingCode', 'guestName', 'roomId', 'roomNumber', 'roomType',
+        'checkIn', 'checkOut', 'nights', 'channel', 'grossRevenue', 'commissionRate',
+        'commissionAmount', 'netRevenue', 'status', 'monthKey', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId', 'bookingCode', 'guestName', 'roomId', 'roomNumber', 'roomType',
+        'checkIn', 'checkOut', 'nights', 'channel', 'grossRevenue', 'commissionRate',
+        'commissionAmount', 'netRevenue', 'status', 'monthKey', 'createdAt', 'updatedAt'
+      ]) &&
+      data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.bookingCode is string && data.bookingCode.size() >= 1 && data.bookingCode.size() <= 40 &&
+      data.guestName is string && data.guestName.size() >= 1 && data.guestName.size() <= 120 &&
+      data.roomId is string && data.roomId.size() >= 1 && data.roomId.size() <= 64 &&
+      data.roomNumber is string && data.roomNumber.size() >= 1 && data.roomNumber.size() <= 16 &&
+      data.roomType is string && data.roomType.size() <= 40 &&
+      data.roomType in ['Standard Room', 'Deluxe Room', 'Family Suite'] &&
+      data.checkIn is string && data.checkIn.size() >= 10 && data.checkIn.size() <= 20 &&
+      data.checkOut is string && data.checkOut.size() >= 10 && data.checkOut.size() <= 20 &&
+      data.nights is number && data.nights >= 1 && data.nights <= 365 &&
+      data.channel is string && data.channel.size() <= 40 &&
+      data.channel in ['Direct Booking', 'Airbnb', 'Traveloka', 'Tiket.com', 'Agoda', 'Booking.com'] &&
+      data.grossRevenue is number && data.grossRevenue >= 0 && data.grossRevenue <= 1000000000 &&
+      data.commissionRate is number && data.commissionRate >= 0 && data.commissionRate <= 100 &&
+      data.commissionAmount is number && data.commissionAmount >= 0 && data.commissionAmount <= 1000000000 &&
+      data.netRevenue is number && data.netRevenue >= 0 && data.netRevenue <= 1000000000 &&
+      data.status is string && data.status.size() <= 20 &&
+      data.status in ['Confirmed', 'Checked-In', 'Checked-Out', 'Cancelled'] &&
+      data.monthKey is string && data.monthKey.size() >= 7 && data.monthKey.size() <= 10 &&
+      data.createdAt is timestamp &&
+      data.updatedAt is timestamp && data.updatedAt == request.time;
+    }
+
+    function isValidExpense(data) {
+      return data.keys().hasAll([
+        'ownerId', 'category', 'description', 'amount', 'date', 'monthKey', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId', 'category', 'description', 'amount', 'date', 'monthKey', 'createdAt', 'updatedAt'
+      ]) &&
+      data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.category is string && data.category.size() <= 80 &&
+      data.category in [
+        'Gaji Staf & Operasional SDM',
+        'Listrik, Air, WiFi & Gas (Utilities)',
+        'Housekeeping, Laundry & Amenities',
+        'Bahan Baku Sarapan (F&B Cost)',
+        'Maintenance & Perbaikan Rutin',
+        'Marketing & Promosi',
+        'Depresiasi Aset & Peralatan'
+      ] &&
+      data.description is string && data.description.size() >= 1 && data.description.size() <= 200 &&
+      data.amount is number && data.amount >= 0 && data.amount <= 1000000000 &&
+      data.date is string && data.date.size() >= 10 && data.date.size() <= 20 &&
+      data.monthKey is string && data.monthKey.size() >= 7 && data.monthKey.size() <= 10 &&
+      data.createdAt is timestamp &&
+      data.updatedAt is timestamp && data.updatedAt == request.time;
+    }
+
+    function isValidSettings(data) {
+      return data.keys().hasAll([
+        'ownerId', 'standardWeekday', 'standardWeekend', 'deluxeWeekday', 'deluxeWeekend',
+        'familySuiteRate', 'commAirbnb', 'commTraveloka', 'commTiket', 'commAgoda',
+        'commBooking', 'lastOtaSync', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId', 'standardWeekday', 'standardWeekend', 'deluxeWeekday', 'deluxeWeekend',
+        'familySuiteRate', 'commAirbnb', 'commTraveloka', 'commTiket', 'commAgoda',
+        'commBooking', 'lastOtaSync', 'updatedAt'
+      ]) &&
+      data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.standardWeekday is number && data.standardWeekday >= 0 && data.standardWeekday <= 100000000 &&
+      data.standardWeekend is number && data.standardWeekend >= 0 && data.standardWeekend <= 100000000 &&
+      data.deluxeWeekday is number && data.deluxeWeekday >= 0 && data.deluxeWeekday <= 100000000 &&
+      data.deluxeWeekend is number && data.deluxeWeekend >= 0 && data.deluxeWeekend <= 100000000 &&
+      data.familySuiteRate is number && data.familySuiteRate >= 0 && data.familySuiteRate <= 100000000 &&
+      data.commAirbnb is number && data.commAirbnb >= 0 && data.commAirbnb <= 100 &&
+      data.commTraveloka is number && data.commTraveloka >= 0 && data.commTraveloka <= 100 &&
+      data.commTiket is number && data.commTiket >= 0 && data.commTiket <= 100 &&
+      data.commAgoda is number && data.commAgoda >= 0 && data.commAgoda <= 100 &&
+      data.commBooking is number && data.commBooking >= 0 && data.commBooking <= 100 &&
+      data.lastOtaSync is string && data.lastOtaSync.size() >= 1 && data.lastOtaSync.size() <= 64 &&
+      data.updatedAt is timestamp && data.updatedAt == request.time;
+    }
+
+    match /rooms/{roomId} {
+      allow get: if isSignedIn() && isValidId(roomId) && (existing().ownerId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && isValidId(roomId) && isValidRoom(incoming());
+      allow update: if isSignedIn() && isValidId(roomId) && isValidRoom(incoming()) &&
+        incoming().ownerId == existing().ownerId && (
+          isAdmin() ||
+          (existing().ownerId == request.auth.uid &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'status', 'weekdayRate', 'weekendRate', 'type', 'physicalCategory', 'name', 'includesBreakfast', 'updatedAt'
+            ])
+          )
+        );
+      allow delete: if isSignedIn() && isValidId(roomId) && (existing().ownerId == request.auth.uid || isAdmin());
+    }
+
+    match /reservations/{reservationId} {
+      allow get: if isSignedIn() && isValidId(reservationId) && (existing().ownerId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && isValidId(reservationId) && isValidReservation(incoming()) &&
+        incoming().createdAt == request.time;
+      allow update: if isSignedIn() && isValidId(reservationId) && isValidReservation(incoming()) &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt && (
+          isAdmin() ||
+          (existing().ownerId == request.auth.uid &&
+            existing().status != 'Cancelled' &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'status', 'guestName', 'checkIn', 'checkOut', 'nights', 'channel',
+              'grossRevenue', 'commissionRate', 'commissionAmount', 'netRevenue', 'updatedAt'
+            ])
+          )
+        );
+      allow delete: if isSignedIn() && isValidId(reservationId) && (existing().ownerId == request.auth.uid || isAdmin());
+    }
+
+    match /expenses/{expenseId} {
+      allow get: if isSignedIn() && isValidId(expenseId) && (existing().ownerId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && isValidId(expenseId) && isValidExpense(incoming()) &&
+        incoming().createdAt == request.time;
+      allow update: if isSignedIn() && isValidId(expenseId) && isValidExpense(incoming()) &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt && (
+          isAdmin() ||
+          (existing().ownerId == request.auth.uid &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'category', 'description', 'amount', 'date', 'monthKey', 'updatedAt'
+            ])
+          )
+        );
+      allow delete: if isSignedIn() && isValidId(expenseId) && (existing().ownerId == request.auth.uid || isAdmin());
+    }
+
+    match /settings/{settingId} {
+      allow get: if isSignedIn() && isValidId(settingId) && (existing().ownerId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && isValidId(settingId) && isValidSettings(incoming());
+      allow update: if isSignedIn() && isValidId(settingId) && isValidSettings(incoming()) &&
+        incoming().ownerId == existing().ownerId && (
+          isAdmin() ||
+          (existing().ownerId == request.auth.uid &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'standardWeekday', 'standardWeekend', 'deluxeWeekday', 'deluxeWeekend',
+              'familySuiteRate', 'commAirbnb', 'commTraveloka', 'commTiket', 'commAgoda',
+              'commBooking', 'lastOtaSync', 'updatedAt'
+            ])
+          )
+        );
+      allow delete: if isSignedIn() && isValidId(settingId) && (existing().ownerId == request.auth.uid || isAdmin());
+    }
+  }
+}
