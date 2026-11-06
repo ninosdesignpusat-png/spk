@@ -9,6 +9,7 @@
     "start": "tsx server.ts",
     "build": "vite build",
     "preview": "vite preview",
+    "push": "./push.sh",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"
   },
